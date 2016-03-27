@@ -1,0 +1,5 @@
+# Build output
+*.o
+bin/*
+# Autotools files
+Makefile
