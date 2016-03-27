@@ -22,13 +22,19 @@ along with .  If not, see <http://www.gnu.org/licenses/>.
 <interface>
   <requires lib="gtk+" version="3.12"/>
   <!-- interface-license-type gplv3 -->
+  <object class="GtkAdjustment" id="port_adjustment">
+    <property name="upper">100000</property>
+    <property name="value">22</property>
+    <property name="step_increment">1</property>
+    <property name="page_increment">10</property>
+  </object>
   <template class="MainAppWindow" parent="GtkApplicationWindow">
     <property name="can_focus">False</property>
     <property name="title" translatable="yes">SSHFS Connection Tool</property>
     <property name="icon_name">folder-remote</property>
     <property name="has_resize_grip">True</property>
     <child>
-      <object class="GtkGrid" id="main-grid">
+      <object class="GtkGrid" id="main_grid">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
         <property name="margin_left">10</property>
@@ -78,7 +84,7 @@ along with .  If not, see <http://www.gnu.org/licenses/>.
           </packing>
         </child>
         <child>
-          <object class="GtkLabel" id="host-label">
+          <object class="GtkLabel" id="host_label">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="tooltip_text" translatable="yes">Username and hostname or ip address of host that should be connected to</property>
@@ -92,10 +98,9 @@ along with .  If not, see <http://www.gnu.org/licenses/>.
           </packing>
         </child>
         <child>
-          <object class="GtkLabel" id="remotedir-label">
+          <object class="GtkLabel" id="remotedir_label">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
-            <property name="tooltip_text" translatable="yes">Home-relative or absolute path to remote directory that should be connected to</property>
             <property name="halign">end</property>
             <property name="hexpand">False</property>
             <property name="label" translatable="yes">Remote Directory</property>
@@ -106,10 +111,9 @@ along with .  If not, see <http://www.gnu.org/licenses/>.
           </packing>
         </child>
         <child>
-          <object class="GtkLabel" id="mount-point-label">
+          <object class="GtkLabel" id="mount_point_label">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
-            <property name="tooltip_text" translatable="yes">Local directory to mount remote one to</property>
             <property name="halign">end</property>
             <property name="hexpand">False</property>
             <property name="label" translatable="yes">Mount point</property>
@@ -166,25 +170,26 @@ along with .  If not, see <http://www.gnu.org/licenses/>.
           </packing>
         </child>
         <child>
-          <object class="GtkExpander" id="option-expander">
+          <object class="GtkExpander" id="option_expander">
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="valign">start</property>
             <property name="vexpand">True</property>
             <property name="resize_toplevel">True</property>
             <child>
-              <object class="GtkGrid" id="option-grid">
+              <object class="GtkGrid" id="option_grid">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="row_spacing">2</property>
+                <property name="row_spacing">10</property>
                 <property name="column_spacing">14</property>
                 <property name="row_homogeneous">True</property>
                 <child>
-                  <object class="GtkCheckButton" id="custom-port-check">
+                  <object class="GtkCheckButton" id="custom_port_check">
                     <property name="label" translatable="yes">Custom Port</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">False</property>
+                    <property name="tooltip_text" translatable="yes">Enable if server is using a non-standerd port</property>
                     <property name="xalign">0</property>
                     <property name="draw_indicator">True</property>
                   </object>
@@ -194,14 +199,16 @@ along with .  If not, see <http://www.gnu.org/licenses/>.
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkSpinButton" id="port-spin-button">
+                  <object class="GtkSpinButton" id="port_spin_button">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
-                    <property name="editable">False</property>
-                    <property name="max_length">5</property>
-                    <property name="text" translatable="yes">22</property>
+                    <property name="hexpand">True</property>
                     <property name="truncate_multiline">True</property>
+                    <property name="caps_lock_warning">False</property>
+                    <property name="secondary_icon_tooltip_text" translatable="yes">The custom port number to use</property>
                     <property name="input_purpose">number</property>
+                    <property name="adjustment">port_adjustment</property>
+                    <property name="climb_rate">1</property>
                     <property name="snap_to_ticks">True</property>
                     <property name="numeric">True</property>
                     <property name="wrap">True</property>
@@ -212,7 +219,7 @@ along with .  If not, see <http://www.gnu.org/licenses/>.
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkEntry" id="other-option-entry">
+                  <object class="GtkEntry" id="other_options_entry">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="hexpand">True</property>
@@ -224,7 +231,7 @@ along with .  If not, see <http://www.gnu.org/licenses/>.
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkLabel" id="other-options-label">
+                  <object class="GtkLabel" id="other_options_label">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="halign">end</property>
@@ -236,11 +243,12 @@ along with .  If not, see <http://www.gnu.org/licenses/>.
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkCheckButton" id="legacy-protocol-check">
+                  <object class="GtkCheckButton" id="legacy_protocol_check">
                     <property name="label" translatable="yes">Legacy Protocol</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">False</property>
+                    <property name="tooltip_text" translatable="yes">Use version 1 of the SSH protocol</property>
                     <property name="xalign">0</property>
                     <property name="draw_indicator">True</property>
                   </object>
@@ -252,7 +260,7 @@ along with .  If not, see <http://www.gnu.org/licenses/>.
               </object>
             </child>
             <child type="label">
-              <object class="GtkLabel" id="option-label">
+              <object class="GtkLabel" id="option_label">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="label" translatable="yes">Advanced options</property>

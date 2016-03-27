@@ -5,7 +5,7 @@ A GTK-3 based front-end for the sshfs tool written in C. The application is curr
 * Lack of polish
 * Etc.
 
-![screenshot](http://i.imgur.com/7n3VEkd.png "Screenshot ")
+![screenshot](http://i.imgur.com/Bzy8ygm.png "Screenshot")
 
 The theme used is [Arc-Dark](https://github.com/horst3180/Arc-theme)
 

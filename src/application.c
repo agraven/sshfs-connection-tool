@@ -28,27 +28,25 @@ static void activate_about(GSimpleAction* action, GVariant* parameter, gpointer 
 		"logo-icon-name", "applications-debugging",
 		NULL);
 }
-static void activate_preferences(GSimpleAction* action, GVariant* parameter, gpointer app) { }
 static void activate_quit(GSimpleAction* action, GVariant* parameter, gpointer app) {
 	g_application_quit(G_APPLICATION(app));
 }
 static GActionEntry app_actions[] = {
-	{ "preferences", activate_preferences, NULL, NULL, NULL },
 	{ "quit", activate_quit, NULL, NULL, NULL },
 	{ "about", activate_about, NULL, NULL, NULL },
 };
 static void main_app_startup(GApplication* app) {
 	G_APPLICATION_CLASS(main_app_parent_class)->startup(app); // Macro required in this function to define startup calls
-	/* Define menubar */
-	GtkBuilder* builder; // Builder defining menu items
-	GMenuModel* menu; // Pointer to the menu itself
-	g_action_map_add_action_entries(G_ACTION_MAP(app), app_actions, G_N_ELEMENTS(app_actions), app); // Assigns actions to app
-	builder = gtk_builder_new_from_resource("/net/tgraven/test/menu.ui"); // Initializes builder with file in .gresource.xml
-	menu = G_MENU_MODEL(gtk_builder_get_object(builder, "appmenu")); // Initializes menu with data from builder
-	gtk_application_set_menubar(GTK_APPLICATION(app), menu); // Assigns the menu to the application
-	g_object_unref(builder); // Destructs the builder
+
+	GtkBuilder* builder;
+	GMenuModel* menu;
+	builder = gtk_builder_new_from_resource("/net/tgraven/test/menu.ui"); 
+	menu = G_MENU_MODEL(gtk_builder_get_object(builder, "appmenu")); 
+	gtk_application_set_menubar(GTK_APPLICATION(app), menu); 
+	g_object_unref(builder); 
 
 	/* Assign accelerators/keyboard shortcuts */
+	g_action_map_add_action_entries(G_ACTION_MAP(app), app_actions, G_N_ELEMENTS(app_actions), app);
 	gtk_application_add_accelerator(GTK_APPLICATION(app), "<Ctrl>q", "app.quit", NULL);
 }
 static void main_app_activate(GApplication* app) {

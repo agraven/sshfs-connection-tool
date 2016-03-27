@@ -15,6 +15,10 @@ struct _MainAppWindowPrivate {
 	GtkWidget* host_entry;
 	GtkWidget* remotedir_entry;
 	GtkWidget* mountpoint_chooser;
+	GtkWidget* legacy_protocol_check;
+	GtkWidget* custom_port_check;
+	GtkWidget* port_spin_button;
+	GtkWidget* other_options_entry;
 };
 
 G_DEFINE_TYPE_WITH_PRIVATE(MainAppWindow, main_app_window, GTK_TYPE_APPLICATION_WINDOW);
@@ -31,27 +35,31 @@ static void clicked_connect(GtkApplication* app, MainAppWindow* win) {
 	const gchar* host = gtk_entry_get_text(GTK_ENTRY(private->host_entry));
 	const gchar* dir = gtk_entry_get_text(GTK_ENTRY(private->remotedir_entry));
 	const gchar* mountpoint = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(private->mountpoint_chooser));
+	gboolean legacy_protocol = gtk_toggle_button_get_mode(GTK_TOGGLE_BUTTON(private->legacy_protocol_check));
+	gboolean custom_port = gtk_toggle_button_get_mode(GTK_TOGGLE_BUTTON(private->custom_port_check));
+	gint port = gtk_spin_button_get_value(GTK_SPIN_BUTTON(private->port_spin_button));
+	const gchar* other_options = gtk_entry_get_text(GTK_ENTRY(private->other_options_entry));
 	g_print("Mounting %s:%s to %s\n", host, dir, mountpoint);
-	// Everything from here becomes more and more hack-ish
-	int nulldev = open("/dev/null", O_WRONLY);
-	long int size = dprintf(nulldev, "mountpoint -q %s", mountpoint) + 1;
-	char buf[size];
-	snprintf(buf, size, "mountpoint -q %s", mountpoint);
-	const char* is_mountpoint_cmd = buf;
+
+	// Figure out if target mountpoint is already a mountpoint
+	char nullbuf[0];
+	long int size = snprintf(nullbuf, 0, "mountpoint -q %s", mountpoint) + 1;
+	char is_mountpoint_cmd[size];
+	snprintf(is_mountpoint_cmd, size, "mountpoint -q %s", mountpoint);
 	g_print("executed command is '%s'\n", is_mountpoint_cmd);
+
 	if (system(is_mountpoint_cmd) != 0) {
-		size = dprintf(nulldev, "sshfs %s:%s %s", host, dir, mountpoint) + 1;
-		char buf2[size];
-		snprintf(buf2, size, "sshfs %s:%s %s", host, dir, mountpoint);
-		close(nulldev);
-		const char* mount_cmd = buf2;
+		size = snprintf(nullbuf, 0, "sshfs %s:'%s' %s%s -p %d %s", host, dir, mountpoint,
+		  legacy_protocol ? " -1" : "", custom_port ? port : 22, other_options) + 1;
+		char mount_cmd[size];
+		snprintf(mount_cmd, size, "sshfs %s:%s %s%s -p %d %s", host, dir, mountpoint,
+		  legacy_protocol ? " -1" : "", custom_port ? port : 22, other_options);
 		g_print("executed command is '%s'", mount_cmd);
 		int retval = system(mount_cmd);
-		g_print(" with return value %d\n", retval);
 		if (retval != 0) {
 			GtkWidget* dialog = gtk_message_dialog_new(GTK_WINDOW(win), 
 			  GTK_DIALOG_DESTROY_WITH_PARENT, GTK_MESSAGE_ERROR, GTK_BUTTONS_CLOSE,
-			  "Failed to connect.");
+			  "Failed to connect. Error code is %d", retval);
 			gtk_dialog_run(GTK_DIALOG(dialog));
 			gtk_widget_destroy(dialog);
 		}
@@ -72,6 +80,10 @@ static void main_app_window_class_init (MainAppWindowClass *class) {
 	gtk_widget_class_bind_template_child_private(GTK_WIDGET_CLASS(class), MainAppWindow, remotedir_entry);
 	gtk_widget_class_bind_template_child_private(GTK_WIDGET_CLASS(class), MainAppWindow, mountpoint_chooser);
 	gtk_widget_class_bind_template_child_private(GTK_WIDGET_CLASS(class), MainAppWindow, connect_button);
+	gtk_widget_class_bind_template_child_private(GTK_WIDGET_CLASS(class), MainAppWindow, legacy_protocol_check);
+	gtk_widget_class_bind_template_child_private(GTK_WIDGET_CLASS(class), MainAppWindow, custom_port_check);
+	gtk_widget_class_bind_template_child_private(GTK_WIDGET_CLASS(class), MainAppWindow, port_spin_button);
+	gtk_widget_class_bind_template_child_private(GTK_WIDGET_CLASS(class), MainAppWindow, other_options_entry);
 }
 MainAppWindow* main_app_window_new (MainApp *app) {
 	return g_object_new (MAIN_APP_WINDOW_TYPE, "application", app, NULL);
