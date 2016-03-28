@@ -4,3 +4,17 @@
 bin/*
 # Autotools files
 Makefile
+Makefile.in
+aclocal.m4
+autom4te.cache/
+build-aux/
+config.log
+config.status
+configure
+include/config.h
+include/config.h.in
+stamp*
+src-resources.c
+.deps/
+
+*.Po
