@@ -16,6 +16,8 @@ PKG_CHECK_MODULES([GTK],
                 ]
 )
 
+AC_PATH_PROG(GLIB_COMPILE_RESOURCES, glib-compile-resources)
+
 AC_CHECK_HEADER_STDBOOL
 
 AM_SILENT_RULES([yes])
