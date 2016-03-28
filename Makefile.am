@@ -13,7 +13,8 @@ bin_sshfs_connection_tool_LDADD = \
 
 bin_sshfs_connection_tool_CFLAGS = \
 	$(GTK_CFLAGS) \
-	$(AM_CFLAGS)
+	$(AM_CFLAGS) \
+	-I$(top_srcdir)/include
 
 EXTRA_DIST = \
 	builder/main.ui \
