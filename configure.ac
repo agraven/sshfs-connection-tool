@@ -23,3 +23,19 @@ AC_CONFIG_HEADERS([include/config.h])
 AC_CONFIG_FILES([Makefile])
 
 AC_OUTPUT
+
+AC_MSG_RESULT([
+        sshfs-connection-tool $VERSION
+        ========
+
+        prefix:                 ${prefix}
+        libdir:                 ${libdir}
+        sysconfdir:             ${sysconfdir}
+        exec_prefix:            ${exec_prefix}
+        bindir:                 ${bindir}
+        datarootdir:            ${datarootdir}
+
+        compiler:               ${CC}
+        cflags:                 ${CFLAGS}
+        ldflags:                ${LDFLAGS}
+])
