@@ -14,7 +14,7 @@ configure
 include/config.h
 include/config.h.in
 stamp*
-src-resources.c
+src/resources.c
 .deps/
 
 *.Po

@@ -24,10 +24,10 @@ EXTRA_DIST = \
 src_resources = $(shell glib-compile-resources --sourcedir=$(top_srcdir)/builder --generate-dependencies $(top_srcdir)/builder/test.gresource.xml)
 
 BUILT_SOURCES = \
-	src-resources.c
+	src/resources.c
 
 CLEANFILES = \
 	$(BUILT_SOURCES)
 
-src-resources.c: $(top_srcdir)/builder/test.gresource.xml $(src_resources)
-	glib-compile-resources --target=$@ --sourcedir=$(top_srcdir)/builder --generate-source --c-name sshfs_connection_resources $<
+src/resources.c: $(top_srcdir)/builder/test.gresource.xml $(src_resources)
+	glib-compile-resources --target=$(top_builddir)/$@ --sourcedir=$(top_srcdir)/builder --generate-source --c-name sshfs_connection_resources $<
