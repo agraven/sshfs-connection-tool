@@ -3,8 +3,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include "ioext.h"
 #include "application.h"
 #include "window.h"
+const int DEFAULT_SSH_PORT = 22;
 struct _MainAppWindow { GtkApplicationWindow parent; };
 struct _MainAppWindowClass { GtkApplicationWindowClass parent_class; };
 typedef struct _MainAppWindowPrivate MainAppWindowPrivate;
@@ -38,11 +40,11 @@ static void clicked_connect(GtkApplication* app, MainAppWindow* win) {
 	const gchar* other_options = gtk_entry_get_text(GTK_ENTRY(private->other_options_entry));
 
 	char* is_mountpoint_cmd;
-	int strsize = asprintf(&is_mountpoint_cmd, "mountpoint -q %s", mountpoint);
-	if (system(is_mountpoint_cmd) != 0 && strsize != 0) {
+	int strsize = msprintf(&is_mountpoint_cmd, "mountpoint -q %s", mountpoint);
+	if (strsize != 0 && system(is_mountpoint_cmd) != 0) {
 		char* mount_cmd;
-		asprintf(&mount_cmd, "sshfs %s:%s %s%s -p %d %s", host, dir, mountpoint,
-		  legacy_protocol ? " -1" : "", custom_port ? port : 22, other_options);
+		msprintf(&mount_cmd, "sshfs %s:%s %s%s -p %d %s", host, dir, mountpoint,
+		  legacy_protocol ? " -1" : "", custom_port ? port : DEFAULT_SSH_PORT, other_options);
 		int retval = system(mount_cmd);
 		if (retval != 0) {
 			GtkWidget* dialog = gtk_message_dialog_new(GTK_WINDOW(win), 
