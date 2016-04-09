@@ -53,9 +53,9 @@ static void clicked_connect(GtkApplication* app, MainAppWindow* win) {
 			gtk_dialog_run(GTK_DIALOG(dialog));
 			gtk_widget_destroy(dialog);
 		}
-		free(mount_cmd);
+		mfree(mount_cmd);
 	}
-	free(is_mountpoint_cmd);
+	mfree(is_mountpoint_cmd);
 }
 static void main_app_window_init (MainAppWindow *win) {
 	gtk_widget_init_template(GTK_WIDGET(win));

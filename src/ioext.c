@@ -25,7 +25,7 @@ int vmsprintf(char **strp, const char *fmt, va_list ap) {
 		if (*strp) {
 			length = vsnprintf(*strp, size+1, fmt, ap);
 			if ((length < 0) || (length > size)) {
-				free(*strp);
+				mfree(*strp);
 				length = -1;
 			}
 		}
