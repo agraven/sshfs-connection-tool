@@ -17,11 +17,10 @@ bin_sshfs_connection_tool_CFLAGS = \
 	-I$(top_srcdir)/include
 
 EXTRA_DIST = \
-	builder/main.ui \
-	builder/menu.ui \
-	builder/test.gresource.xml
-	
-src_resources = $(shell glib-compile-resources --sourcedir=$(top_srcdir)/builder --generate-dependencies $(top_srcdir)/builder/test.gresource.xml)
+	builder
+dist-hook:
+	rm -f `find $(top_distdir) -name '*~'`
+src_resources = $(shell glib-compile-resources --sourcedir=$(top_srcdir)/builder --generate-dependencies $(top_srcdir)/builder/sct.gresource.xml)
 
 BUILT_SOURCES = \
 	src/resources.c
@@ -29,5 +28,5 @@ BUILT_SOURCES = \
 CLEANFILES = \
 	$(BUILT_SOURCES)
 
-src/resources.c: $(top_srcdir)/builder/test.gresource.xml $(src_resources)
+src/resources.c: $(top_srcdir)/builder/sct.gresource.xml $(src_resources)
 	glib-compile-resources --target=$(top_builddir)/$@ --sourcedir=$(top_srcdir)/builder --generate-source --c-name sshfs_connection_resources $<
