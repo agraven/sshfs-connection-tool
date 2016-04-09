@@ -1,19 +1,22 @@
 # SSHFS Connection Tool
 A GTK-3 based front-end for the sshfs tool written in C. The application is currently in very early stages, and has various issues, like:
 * Missing features
-* Features that are implemented in unholy manners (primarily command invocations)
+* Features that are implemented in unholy manners (primarily string manipulation)
 * Lack of polish
 * Etc.
 
+Here is a screenshot of the application:
 ![screenshot](http://i.imgur.com/Bzy8ygm.png "Screenshot")
 
 The theme used is [Arc-Dark](https://github.com/horst3180/Arc-theme)
 
 ## Dependencies
-The project only depends on sshfs and gtk-3.12 (may be compatible with earlier versions).
+The project depends on the following
+* gtk >= 3.6
+* sshfs
 
 ## Building
-The project is autotools-based and can be built with the usual
+The project is autotools-based, and can be built with the usual:
 ./configure && make && sudo make install
 
-The resources.c file can be manually rebuilt with build.sh in case make doesn't take care of it.
+If configure is missing then running autogen.sh will generate it.

@@ -1,9 +1,7 @@
-#include <fcntl.h>
 #include <gtk/gtk.h>
+#define _GNU_SOURCE
 #include <stdio.h>
 #include <stdlib.h>
-#include <sys/types.h>
-#include <sys/stat.h>
 #include <unistd.h>
 #include "application.h"
 #include "window.h"
@@ -28,7 +26,6 @@ static void activate_close(GSimpleAction* action, GVariant* parameter, gpointer 
 }
 static GActionEntry win_actions[] = {
 	{"close", activate_close, NULL, NULL, NULL},
-	//{"connect", activate_connect, NULL, NULL, NULL}, //matching function to-be-implemented
 };
 static void clicked_connect(GtkApplication* app, MainAppWindow* win) {
 	MainAppWindowPrivate* private = main_app_window_get_instance_private(MAIN_APP_WINDOW(win));
@@ -39,22 +36,13 @@ static void clicked_connect(GtkApplication* app, MainAppWindow* win) {
 	gboolean custom_port = gtk_toggle_button_get_mode(GTK_TOGGLE_BUTTON(private->custom_port_check));
 	gint port = gtk_spin_button_get_value(GTK_SPIN_BUTTON(private->port_spin_button));
 	const gchar* other_options = gtk_entry_get_text(GTK_ENTRY(private->other_options_entry));
-	g_print("Mounting %s:%s to %s\n", host, dir, mountpoint);
 
-	// Figure out if target mountpoint is already a mountpoint
-	char nullbuf[0];
-	long int size = snprintf(nullbuf, 0, "mountpoint -q %s", mountpoint) + 1;
-	char is_mountpoint_cmd[size];
-	snprintf(is_mountpoint_cmd, size, "mountpoint -q %s", mountpoint);
-	g_print("executed command is '%s'\n", is_mountpoint_cmd);
-
-	if (system(is_mountpoint_cmd) != 0) {
-		size = snprintf(nullbuf, 0, "sshfs %s:'%s' %s%s -p %d %s", host, dir, mountpoint,
-		  legacy_protocol ? " -1" : "", custom_port ? port : 22, other_options) + 1;
-		char mount_cmd[size];
-		snprintf(mount_cmd, size, "sshfs %s:%s %s%s -p %d %s", host, dir, mountpoint,
+	char* is_mountpoint_cmd;
+	int strsize = asprintf(&is_mountpoint_cmd, "mountpoint -q %s", mountpoint);
+	if (system(is_mountpoint_cmd) != 0 && strsize != 0) {
+		char* mount_cmd;
+		asprintf(&mount_cmd, "sshfs %s:%s %s%s -p %d %s", host, dir, mountpoint,
 		  legacy_protocol ? " -1" : "", custom_port ? port : 22, other_options);
-		g_print("executed command is '%s'", mount_cmd);
 		int retval = system(mount_cmd);
 		if (retval != 0) {
 			GtkWidget* dialog = gtk_message_dialog_new(GTK_WINDOW(win), 
@@ -63,7 +51,9 @@ static void clicked_connect(GtkApplication* app, MainAppWindow* win) {
 			gtk_dialog_run(GTK_DIALOG(dialog));
 			gtk_widget_destroy(dialog);
 		}
+		free(mount_cmd);
 	}
+	free(is_mountpoint_cmd);
 }
 static void main_app_window_init (MainAppWindow *win) {
 	gtk_widget_init_template(GTK_WIDGET(win));

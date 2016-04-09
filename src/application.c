@@ -31,12 +31,20 @@ static void activate_about(GSimpleAction* action, GVariant* parameter, gpointer 
 static void activate_quit(GSimpleAction* action, GVariant* parameter, gpointer app) {
 	g_application_quit(G_APPLICATION(app));
 }
+const char* quit_accels[] = {
+	"<Ctrl>q",
+	NULL
+};
+const char* close_accels[] = {
+	"<Ctrl>w",
+	NULL
+};
 static GActionEntry app_actions[] = {
 	{ "quit", activate_quit, NULL, NULL, NULL },
 	{ "about", activate_about, NULL, NULL, NULL },
 };
 static void main_app_startup(GApplication* app) {
-	G_APPLICATION_CLASS(main_app_parent_class)->startup(app); // Macro required in this function to define startup calls
+	G_APPLICATION_CLASS(main_app_parent_class)->startup(app); // Define handler for startup event
 
 	GtkBuilder* builder;
 	GMenuModel* menu;
@@ -47,7 +55,7 @@ static void main_app_startup(GApplication* app) {
 
 	/* Assign accelerators/keyboard shortcuts */
 	g_action_map_add_action_entries(G_ACTION_MAP(app), app_actions, G_N_ELEMENTS(app_actions), app);
-	gtk_application_add_accelerator(GTK_APPLICATION(app), "<Ctrl>q", "app.quit", NULL);
+	gtk_application_set_accels_for_action(GTK_APPLICATION(app), "app.quit", quit_accels);
 }
 static void main_app_activate(GApplication* app) {
 	MainAppWindow *window;

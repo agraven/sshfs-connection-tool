@@ -7,7 +7,7 @@ AM_INIT_AUTOMAKE([foreign -Wall -Werror subdir-objects -Wno-portability])
 AC_PROG_CC
 PKG_PROG_PKG_CONFIG
 
-m4_define([gtk_required_version], [3.10])
+m4_define([gtk_required_version], [3.6])
 
 PKG_CHECK_MODULES([GTK],
                 [
